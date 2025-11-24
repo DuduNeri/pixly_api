@@ -1,4 +1,4 @@
-📸 Pixly API — Backend da mini rede social de fotos
+Pixly API — Backend da mini rede social de fotos
 
 API desenvolvida em Node.js + TypeScript, responsável por toda a lógica do Pixly, uma mini rede social de fotos.
 Ela gerencia autenticação, usuários, uploads de imagens, curtidas, comentários e o feed personalizado.
