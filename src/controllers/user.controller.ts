@@ -23,4 +23,12 @@ export class userController {
       throw new Error(`Erro ao buscar usuário:${error.message}`);
     }
   }
+
+  async deletUse(id: string): Promise<string>{
+    try {
+      return this.UserServices.deleteUser(id)
+    } catch (error: any) {
+      throw new Error(`Erro ao tentar deletar usuário:${error.message}`);
+    }
+  }
 }

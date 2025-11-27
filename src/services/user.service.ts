@@ -30,10 +30,20 @@ export class userServices {
   async getUser(id: string): Promise<IUserResponse> {
     const user = await User.findByPk(id);
     if (!user) {
-      throw new AppError(400, "Usuário não encontrado");
+      throw new AppError(404, "Usuário não encontrado"); 
     }
     const userJson = user.toJSON();
     const { password, ...userWithoutPassword } = userJson;
     return userWithoutPassword as IUserResponse;
+  }
+
+  async deleteUser(id: string): Promise<string> {
+    const user = await User.findByPk(id);
+    if (!user) {
+      throw new AppError(404, "Usuário não encontrado para exclusão"); 
+    }
+
+    await user.destroy();
+    return "Usuário deletado com sucesso";
   }
 }
