@@ -12,3 +12,15 @@ userRoute.post("/create", async (req: Request, res: Response) => {
     res.status(400).json({ message: error.message });
   }
 });
+
+userRoute.get("/user/:id", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    console.log(id)
+    const user = await UserController.getUse(id)
+    console.log(user)
+    res.status(200).json(user)
+  } catch (error: any) {
+    res.status(400).json({message: error.message})
+  }
+})

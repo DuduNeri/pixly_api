@@ -15,4 +15,12 @@ export class userController {
       throw new Error(`Erro ao criar usuário: ${error.message}`);
     }
   }
+
+  async getUse(id: string): Promise<IUserResponse> {
+    try {
+      return this.UserServices.getUser(id);
+    } catch (error: any) {
+      throw new Error(`Erro ao buscar usuário:${error.message}`);
+    }
+  }
 }
