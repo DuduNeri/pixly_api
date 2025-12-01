@@ -1,4 +1,4 @@
-import { ICreateUser, IUserResponse } from "../interfaces/user.interface";
+import { ICreateUser, IUser, IUserResponse } from "../interfaces/user.interface";
 import { userServices } from "../services/user.service";
 
 export class userController {
@@ -22,6 +22,14 @@ export class userController {
     } catch (error: any) {
       throw new Error(`Erro ao buscar usuário:${error.message}`);
     }
+  }
+
+  async getAll(): Promise<IUserResponse[]>{
+   try {
+    return this.UserServices.getAllUsers()
+   } catch (error: any) {
+    throw new Error(`Erro ao tentar buscar usuários:${error.message}`);
+   }
   }
 
   async deletUse(id: string): Promise<string>{

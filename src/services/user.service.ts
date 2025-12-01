@@ -1,5 +1,9 @@
 import User from "../models/user.model";
-import { ICreateUser, IUserResponse } from "../interfaces/user.interface";
+import {
+  ICreateUser,
+  IUser,
+  IUserResponse,
+} from "../interfaces/user.interface";
 import bcrypt from "bcrypt";
 import { AppError } from "../utils/appError";
 
@@ -30,17 +34,24 @@ export class userServices {
   async getUser(id: string): Promise<IUserResponse> {
     const user = await User.findByPk(id);
     if (!user) {
-      throw new AppError(404, "Usuário não encontrado"); 
+      throw new AppError(404, "Usuário não encontrado");
     }
     const userJson = user.toJSON();
     const { password, ...userWithoutPassword } = userJson;
     return userWithoutPassword as IUserResponse;
   }
 
+  async getAllUsers(): Promise<IUserResponse[]> {
+    const users = await User.findAll({
+      attributes: { exclude: [`password`] },
+    });
+    return users.map((user) => user.toJSON() as IUserResponse);
+  }
+
   async deleteUser(id: string): Promise<string> {
     const user = await User.findByPk(id);
     if (!user) {
-      throw new AppError(404, "Usuário não encontrado para exclusão"); 
+      throw new AppError(404, "Usuário não encontrado para exclusão");
     }
 
     await user.destroy();
