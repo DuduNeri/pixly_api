@@ -39,4 +39,12 @@ export class userController {
       throw new Error(`Erro ao tentar deletar usuário:${error.message}`);
     }
   }
+
+  async update(id: string, data: IUser): Promise<IUserResponse>{
+   try {
+    return this.UserServices.updateUser(id, data)
+   } catch (error: any) {
+    throw new Error(`Erro ao atualizar usuário:${error.message}`);
+   }
+  }
 }
