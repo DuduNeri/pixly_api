@@ -18,7 +18,7 @@ export class AuthService {
     const token = jwt.sign(
       { id: user.id, email: user.email, name: user.name },
       process.env.JWT_SECRET as string,
-      { expiresIn: "2hr" }
+      { expiresIn: "1hr" }
     );
     return {
       message: "Login realizado com sucesso",
