@@ -5,10 +5,24 @@ import {
 import { AppError } from "../utils/appError";
 import Post from "../models/post.model";
 
-export class postService {
+export class PostService {
   async createPost(data: PostCreationAttributes) {
     try {
-      return await Post.create(data);
+      if (!data.userId) {
+        throw new AppError(400, "O ID do usuário é obrigatório para criar um post.");
+      }
+
+      const payload: PostCreationAttributes = {
+        title: data.title,
+        contentText: data.contentText,
+        contentImage: data.contentImage,
+        comments: data.comments ?? [],
+        userId: data.userId,
+      };
+
+      const newPost = await Post.create(payload);
+      return newPost;
+
     } catch (error: any) {
       throw new AppError(400, `Erro ao criar post: ${error.message}`);
     }

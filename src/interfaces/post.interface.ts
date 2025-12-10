@@ -4,9 +4,9 @@ export interface PostAttributes {
   id: string;
   title?: string;
   contentText?: string | null;
-  contentImage?: string | null; // Base64 OU URL
+  contentImage?: string | null; // Base64 ou URL
   comments: string[];
-  userId: string;
+  userId: string; // vem do token, não do body
 }
 
 export interface PostCreationAttributes

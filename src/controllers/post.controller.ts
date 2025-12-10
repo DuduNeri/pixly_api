@@ -1,17 +1,18 @@
 import { PostCreationAttributes } from "../interfaces/post.interface";
-import { postService } from "../services/post.service";
+import { PostService } from "../services/post.service";
 
-export class postController {
-  private PostService: postService;
+export class PostController {
+  private postService: PostService;
+
   constructor() {
-    this.PostService = new postService();
+    this.postService = new PostService();
   }
 
-  async post(data: PostCreationAttributes) {
+  async createPost(data: PostCreationAttributes) {
     try {
-      return await this.PostService.createPost(data);
+      return this.postService.createPost(data);
     } catch (error: any) {
-      throw new Error(`Erro ao cirar post: ${error.message}`);
+      throw new Error(`Erro ao criar post: ${error.message}`);
     }
   }
 }

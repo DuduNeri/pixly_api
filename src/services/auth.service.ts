@@ -11,15 +11,21 @@ export class AuthService {
     const user = await User.findOne({
       where: { email },
     });
+
     if (!user || !(await bcrypt.compare(password, user.password))) {
       throw new AppError(409, "Credenciais inválidas");
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email, name: user.name },
+      {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+      },
       process.env.JWT_SECRET as string,
-      { expiresIn: "1hr" }
+      { expiresIn: "1h" } 
     );
+
     return {
       message: "Login realizado com sucesso",
       token,

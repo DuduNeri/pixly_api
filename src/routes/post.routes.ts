@@ -1,27 +1,27 @@
 import { Router, Request, Response } from "express";
-import { postController } from "../controllers/post.controller";
+import { PostController } from "../controllers/post.controller";
+import { authMidleware } from "../middlewares/auth.middleware";
 
 export const postRouter = Router();
-const Postcontroller = new postController();
+const postController = new PostController();
 
-postRouter.post("/post", async (req: Request, res: Response) => {
+postRouter.post("/post", authMidleware, async (req: Request, res: Response) => {
   try {
-    const { title, contentText } = req.body;
-
-    let contentImage: string | null = null;
-
-    if (req.file) {
-      contentImage = req.file.buffer.toString("base64");
+    if (!req.user) {
+      return res.status(401).json({ error: "Usuário não autenticado" });
     }
 
-    const newPost = await Postcontroller.post({
+    const { title, contentText, contentImage } = req.body;
+
+    const post = await postController.createPost({
       title,
       contentText,
       contentImage,
-      userId: (req as any).user.id,
+      userId: req.user.id,
+      comments: [],
     });
 
-    res.status(200).json(newPost);
+    res.status(201).json(post);
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }

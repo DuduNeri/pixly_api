@@ -12,9 +12,7 @@ imageRoute.post(
   upload.single("image"),
   async (req: Request, res: Response) => {
     try {
-      const newImage = await image.postImage(
-        req.file as Express.Multer.File
-      );
+      const newImage = await image.postImage(req.file as Express.Multer.File);
 
       res.status(201).json(newImage);
     } catch (error: any) {
