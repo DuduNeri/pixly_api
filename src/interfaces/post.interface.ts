@@ -4,9 +4,18 @@ export interface PostAttributes {
   id: string;
   title?: string;
   contentText?: string | null;
-  contentImage?: string | null; // Base64 ou URL
+  contentImage?: string | null;
   comments: string[];
-  userId: string; // vem do token, não do body
+  userId: string; 
+}
+
+export interface IPosts{
+  id: string;
+  title?: string;
+  contentText?: string | null;
+  contentImage?: string | null; 
+  comments: string[];
+  userId: string;
 }
 
 export interface PostCreationAttributes

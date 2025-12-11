@@ -26,3 +26,12 @@ postRouter.post("/post", authMidleware, async (req: Request, res: Response) => {
     res.status(400).json({ error: error.message });
   }
 });
+
+postRouter.get("/posts", authMidleware, async (req: Request, res: Response) => {
+  try {
+    const posts = await postController.getPosts();
+    res.status(200).json(posts);
+  } catch (error: any) {
+    res.status(400).json({ error: error.message });
+  }
+});

@@ -10,6 +10,21 @@ export const sequelize = new Sequelize(
     host: process.env.DB_HOST,
     port: Number(process.env.DB_PORT) || 5432,
     dialect: "postgres",
-    logging: false
+    logging: false,
   }
 );
+
+export async function connectDB() {
+  try {
+    await sequelize.authenticate();
+    console.log("🔥 Conectado ao banco com sucesso!");
+
+    // 👉 Aqui cria/sincroniza as tabelas automaticamente
+    await sequelize.sync({ alter: true });
+    console.log("📦 Tabelas sincronizadas com sucesso!");
+
+  } catch (error) {
+    console.error("❌ Erro ao conectar ao banco:", error);
+    process.exit(1);
+  }
+}

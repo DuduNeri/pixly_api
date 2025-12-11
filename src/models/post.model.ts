@@ -36,7 +36,7 @@ Post.init(
     },
 
     contentImage: {
-      type: DataTypes.TEXT, // Base64 ou URL
+      type: DataTypes.TEXT, 
       allowNull: true,
     },
 
