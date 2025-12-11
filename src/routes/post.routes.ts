@@ -35,3 +35,28 @@ postRouter.get("/posts", authMidleware, async (req: Request, res: Response) => {
     res.status(400).json({ error: error.message });
   }
 });
+
+postRouter.delete(
+  "/post/:id",
+  authMidleware,
+  async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+
+      if (!req.user) {
+        return res.status(401).json({ error: "Usuário não autenticado" });
+      }
+
+      const userId = req.user.id;
+
+      const post = await postController.delete(id, userId);
+
+      return res.status(200).json({
+        message: "Post deletado com sucesso",
+        post,
+      });
+    } catch (error: any) {
+      return res.status(400).json({ error: error.message });
+    }
+  }
+);

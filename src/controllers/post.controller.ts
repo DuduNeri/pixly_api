@@ -23,4 +23,12 @@ export class PostController {
       throw new Error(`Erro buscar os posts dos usuários: ${error.message}`);
     }
   }
+
+  async delete(id: string, userId:string){
+    try {
+      return this.postService.deletePost(id, userId)
+    } catch (error: any) {
+       throw new Error(`Erro buscar os deletar post: ${error.message}`);
+    }
+  }
 }

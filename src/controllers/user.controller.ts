@@ -1,4 +1,8 @@
-import { ICreateUser, IUser, IUserResponse } from "../interfaces/user.interface";
+import {
+  ICreateUser,
+  IUser,
+  IUserResponse,
+} from "../interfaces/user.interface";
 import { userServices } from "../services/user.service";
 
 export class userController {
@@ -24,27 +28,27 @@ export class userController {
     }
   }
 
-  async getAll(): Promise<IUserResponse[]>{
-   try {
-    return this.UserServices.getAllUsers()
-   } catch (error: any) {
-    throw new Error(`Erro ao tentar buscar usuários:${error.message}`);
-   }
+  async getAll(): Promise<IUserResponse[]> {
+    try {
+      return this.UserServices.getAllUsers();
+    } catch (error: any) {
+      throw new Error(`Erro ao tentar buscar usuários:${error.message}`);
+    }
   }
 
-  async deletUse(id: string): Promise<string>{
+  async deletUse(id: string): Promise<string> {
     try {
-      return this.UserServices.deleteUser(id)
+      return this.UserServices.deleteUser(id);
     } catch (error: any) {
       throw new Error(`Erro ao tentar deletar usuário:${error.message}`);
     }
   }
 
-  async update(id: string, data: IUser): Promise<IUserResponse>{
-   try {
-    return this.UserServices.updateUser(id, data)
-   } catch (error: any) {
-    throw new Error(`Erro ao atualizar usuário:${error.message}`);
-   }
+  async update(id: string, data: IUser): Promise<IUserResponse> {
+    try {
+      return this.UserServices.updateUser(id, data);
+    } catch (error: any) {
+      throw new Error(`Erro ao atualizar usuário:${error.message}`);
+    }
   }
 }

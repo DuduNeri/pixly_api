@@ -5,6 +5,7 @@ import {
 } from "../interfaces/post.interface";
 import { AppError } from "../utils/appError";
 import Post from "../models/post.model";
+import { promises } from "dns";
 
 export class PostService {
   async createPost(data: PostCreationAttributes) {
@@ -40,6 +41,27 @@ export class PostService {
       return posts;
     } catch (error: any) {
       throw new AppError(400, `Erro ao buscar posts: ${error.message}`);
+    }
+  }
+
+  async deletePost(id: string, userId: string) {
+    try {
+      const post = await Post.findByPk(id);
+      if (!post) {
+        throw new AppError(404, "Post não encontrado");
+      }
+
+      if (post.userId !== userId) {
+        throw new AppError(
+          403,
+          "Você não tem permissão para excluir este post"
+        );
+      }
+
+      await post.destroy();
+      return { message: "Post excluído com sucesso" };
+    } catch (error: any) {
+      throw new AppError(400, `Erro ao deletar post: ${error.message}`);
     }
   }
 }
