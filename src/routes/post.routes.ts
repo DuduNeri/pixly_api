@@ -60,3 +60,25 @@ postRouter.delete(
     }
   }
 );
+
+postRouter.put("/post/:id", authMidleware,async (req: Request, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ error: "Não autenticado" });
+    }
+
+    const { id } = req.params;
+    const userId = req.user.id;
+    const { title, contentText, contentImage } = req.body;
+
+    const update = await postController.update(id, userId, {
+      title,
+      contentText,
+      contentImage,
+    });
+
+    res.status(200).json(update);
+  } catch (error: any) {
+    res.status(400).json({ error: error.message });
+  }
+});

@@ -18,6 +18,13 @@ export interface IPosts{
   userId: string;
 }
 
+export interface UpdatePostDTO {
+  title?: string;
+  contentText?: string | null;
+  contentImage?: string | null;
+}
+
+
 export interface PostCreationAttributes
   extends Optional<
     PostAttributes,

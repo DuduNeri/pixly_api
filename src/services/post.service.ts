@@ -2,10 +2,10 @@ import {
   IPosts,
   PostAttributes,
   PostCreationAttributes,
+  UpdatePostDTO,
 } from "../interfaces/post.interface";
 import { AppError } from "../utils/appError";
 import Post from "../models/post.model";
-import { promises } from "dns";
 
 export class PostService {
   async createPost(data: PostCreationAttributes) {
@@ -62,6 +62,30 @@ export class PostService {
       return { message: "Post excluído com sucesso" };
     } catch (error: any) {
       throw new AppError(400, `Erro ao deletar post: ${error.message}`);
+    }
+  }
+
+  async updatePost(
+    id: string,
+    userId: string,
+    data: UpdatePostDTO
+  ): Promise<IPosts> {
+    try {
+      const posts = await Post.findByPk(id);
+
+      if (!posts) {
+        throw new AppError(404, "Post não encontrado");
+      }
+
+      if (posts.userId !== userId) {
+        throw new AppError(404, "Você não pode mudar o post de outro usuário");
+      }
+
+      await posts.update(data);
+
+      return posts;
+    } catch (error: any) {
+      throw new AppError(400, `Erro ao atualizar o post: ${error.message}`);
     }
   }
 }
