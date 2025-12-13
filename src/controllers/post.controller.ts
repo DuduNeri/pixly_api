@@ -10,7 +10,7 @@ export class PostController {
 
   async createPost(data: PostCreationAttributes) {
     try {
-      return this.postService.createPost(data);
+      return await this.postService.createPost(data);
     } catch (error: any) {
       throw new Error(`Erro ao criar post: ${error.message}`);
     }
@@ -18,17 +18,17 @@ export class PostController {
 
   async getPosts(): Promise<IPosts[]> {
     try {
-      return this.postService.getPostByUsers();
+      return await this.postService.getPostsByUsers();
     } catch (error: any) {
-      throw new Error(`Erro buscar os posts dos usuários: ${error.message}`);
+      throw new Error(`Erro ao buscar os posts dos usuários: ${error.message}`);
     }
   }
 
   async delete(id: string, userId: string) {
     try {
-      return this.postService.deletePost(id, userId);
+      return await this.postService.deletePost(id, userId);
     } catch (error: any) {
-      throw new Error(`Erro buscar os deletar post: ${error.message}`);
+      throw new Error(`Erro ao deletar post: ${error.message}`);
     }
   }
 
@@ -38,9 +38,9 @@ export class PostController {
     data: UpdatePostDTO
   ): Promise<IPosts> {
     try {
-      return this.postService.updatePost(id, userId, data)
+      return await this.postService.updatePost(id, userId, data);
     } catch (error: any) {
-      throw new Error(`Erro atualizar post: ${error.message}`);
+      throw new Error(`Erro ao atualizar post: ${error.message}`);
     }
   }
 }

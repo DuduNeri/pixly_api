@@ -25,19 +25,20 @@ export class PostService {
         userId: data.userId,
       };
 
-      const newPost = await Post.create(payload);
-      return newPost;
+      return await Post.create(payload);
     } catch (error: any) {
       throw new AppError(400, `Erro ao criar post: ${error.message}`);
     }
   }
 
-  async getPostByUsers(): Promise<IPosts[]> {
+  async getPostsByUsers(): Promise<IPosts[]> {
     try {
       const posts = await Post.findAll();
+
       if (!posts || posts.length === 0) {
         throw new AppError(404, "Nenhum post encontrado");
       }
+
       return posts;
     } catch (error: any) {
       throw new AppError(400, `Erro ao buscar posts: ${error.message}`);
@@ -47,18 +48,17 @@ export class PostService {
   async deletePost(id: string, userId: string) {
     try {
       const post = await Post.findByPk(id);
+
       if (!post) {
         throw new AppError(404, "Post não encontrado");
       }
 
       if (post.userId !== userId) {
-        throw new AppError(
-          403,
-          "Você não tem permissão para excluir este post"
-        );
+        throw new AppError(403, "Você não tem permissão para excluir este post");
       }
 
       await post.destroy();
+
       return { message: "Post excluído com sucesso" };
     } catch (error: any) {
       throw new AppError(400, `Erro ao deletar post: ${error.message}`);
@@ -71,19 +71,19 @@ export class PostService {
     data: UpdatePostDTO
   ): Promise<IPosts> {
     try {
-      const posts = await Post.findByPk(id);
+      const post = await Post.findByPk(id);
 
-      if (!posts) {
+      if (!post) {
         throw new AppError(404, "Post não encontrado");
       }
 
-      if (posts.userId !== userId) {
-        throw new AppError(404, "Você não pode mudar o post de outro usuário");
+      if (post.userId !== userId) {
+        throw new AppError(403, "Você não pode alterar o post de outro usuário");
       }
 
-      await posts.update(data);
+      await post.update(data);
 
-      return posts;
+      return post;
     } catch (error: any) {
       throw new AppError(400, `Erro ao atualizar o post: ${error.message}`);
     }
