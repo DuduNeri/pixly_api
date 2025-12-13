@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import { AppError } from "../utils/appError";
 
 export class userServices {
+  //criar usuário
   async create(data: ICreateUser): Promise<IUserResponse> {
     if (!data.name || !data.email || !data.password) {
       throw new AppError(400, "Todos os campos são obrigatórios");
@@ -27,7 +28,7 @@ export class userServices {
     const { password, ...safeUser } = newUser.toJSON();
     return safeUser as IUserResponse;
   }
-
+  //Busca um usuário específico
   async getUser(id: string): Promise<IUserResponse> {
     const user = await User.findByPk(id);
     if (!user) {
@@ -38,7 +39,7 @@ export class userServices {
     const { password, ...userWithoutPassword } = userJson;
     return userWithoutPassword as IUserResponse;
   }
-
+  //Busca todos os usuários
   async getAllUsers(): Promise<IUserResponse[]> {
     const users = await User.findAll({
       attributes: { exclude: [`password`] },
@@ -46,7 +47,7 @@ export class userServices {
 
     return users.map((user) => user.toJSON() as IUserResponse);
   }
-
+  //Exclui um usuário
   async deleteUser(id: string): Promise<string> {
     const user = await User.findByPk(id);
     if (!user) {
@@ -56,7 +57,7 @@ export class userServices {
     await user.destroy();
     return "Usuário deletado com sucesso";
   }
-
+  //Atualiza nam, email e senha de um usuário
   async updateUser(id: string, data: IUser): Promise<IUserResponse> {
     const user = await User.findByPk(id);
 

@@ -2,6 +2,7 @@ import Image from "../models/image.model";
 import { AppError } from "../utils/appError";
 
 export class ImageService {
+  //permite fazer o upload de arquivos
   async imageUpload(file: Express.Multer.File) {
     if (!file) {
       throw new AppError(400, "Nenhuma imagem enviada");
@@ -21,7 +22,7 @@ export class ImageService {
       type: newImage.type,
     };
   }
-
+  //busca uma imagem especifica pelo id
   async getImage(id: string) {
     const image = await Image.findByPk(id);
 

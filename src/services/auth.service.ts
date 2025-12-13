@@ -7,6 +7,7 @@ import { AppError } from "../utils/appError";
 dotenv.config();
 
 export class AuthService {
+  //lógica de login na plataforma, gera um token de acesso
   async login(email: string, password: string) {
     const user = await User.findOne({
       where: { email },

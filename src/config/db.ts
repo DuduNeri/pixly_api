@@ -19,7 +19,6 @@ export async function connectDB() {
     await sequelize.authenticate();
     console.log("🔥 Conectado ao banco com sucesso!");
 
-    // 👉 Aqui cria/sincroniza as tabelas automaticamente
     await sequelize.sync({ alter: true });
     console.log("📦 Tabelas sincronizadas com sucesso!");
 
