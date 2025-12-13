@@ -33,12 +33,13 @@ export class PostService {
 
   async getPostsByUsers(): Promise<IPosts[]> {
     try {
-      const posts = await Post.findAll();
-
+      const posts = await Post.findAll({
+        order: [["createdAt", "DESC"]],
+      });
+      
       if (!posts || posts.length === 0) {
         throw new AppError(404, "Nenhum post encontrado");
       }
-
       return posts;
     } catch (error: any) {
       throw new AppError(400, `Erro ao buscar posts: ${error.message}`);
@@ -54,7 +55,10 @@ export class PostService {
       }
 
       if (post.userId !== userId) {
-        throw new AppError(403, "Você não tem permissão para excluir este post");
+        throw new AppError(
+          403,
+          "Você não tem permissão para excluir este post"
+        );
       }
 
       await post.destroy();
@@ -78,7 +82,10 @@ export class PostService {
       }
 
       if (post.userId !== userId) {
-        throw new AppError(403, "Você não pode alterar o post de outro usuário");
+        throw new AppError(
+          403,
+          "Você não pode alterar o post de outro usuário"
+        );
       }
 
       await post.update(data);
