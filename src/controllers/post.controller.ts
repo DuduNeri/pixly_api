@@ -1,46 +1,38 @@
-import { PostCreationAttributes, IPosts, UpdatePostDTO } from "../interfaces/post.interface";
+import {
+  PostCreationAttributes,
+  IPosts,
+  UpdatePostDTO,
+} from "../interfaces/post.interface";
 import { PostService } from "../services/post.service";
 
 export class PostController {
-  private postService: PostService;
+  private readonly postService: PostService;
 
   constructor() {
     this.postService = new PostService();
   }
 
-  async createPost(data: PostCreationAttributes) {
-    try {
-      return await this.postService.createPost(data);
-    } catch (error: any) {
-      throw new Error(`Erro ao criar post: ${error.message}`);
-    }
+  createPost(data: PostCreationAttributes) {
+    return this.postService.createPost(data);
   }
 
-  async getPosts(): Promise<IPosts[]> {
-    try {
-      return await this.postService.getPostsByUsers();
-    } catch (error: any) {
-      throw new Error(`Erro ao buscar os posts dos usuários: ${error.message}`);
-    }
+  getPosts(): Promise<IPosts[]> {
+    return this.postService.getPostsByUsers();
   }
 
-  async delete(id: string, userId: string) {
-    try {
-      return await this.postService.deletePost(id, userId);
-    } catch (error: any) {
-      throw new Error(`Erro ao deletar post: ${error.message}`);
-    }
+  getPost(id: string): Promise<IPosts | null> {
+    return this.postService.getPost(id);
   }
 
-  async update(
+  delete(id: string, userId: string) {
+    return this.postService.deletePost(id, userId);
+  }
+
+  update(
     id: string,
     userId: string,
     data: UpdatePostDTO
   ): Promise<IPosts> {
-    try {
-      return await this.postService.updatePost(id, userId, data);
-    } catch (error: any) {
-      throw new Error(`Erro ao atualizar post: ${error.message}`);
-    }
+    return this.postService.updatePost(id, userId, data);
   }
 }

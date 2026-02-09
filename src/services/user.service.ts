@@ -3,16 +3,16 @@ import User from "../models/user.model";
 import { ICreateUser, IUserResponse } from "../interfaces/user.interface";
 import bcrypt from "bcrypt";
 import { AppError } from "../utils/appError";
+import jwt from "jsonwebtoken";
+import { IUserAuthResponse } from "./../interfaces/user.interface";
 
 export class userServices {
-  //criar usuário
-  async create(data: ICreateUser): Promise<IUserResponse> {
+  async create(data: ICreateUser): Promise<IUserAuthResponse> {
     if (!data.name || !data.email || !data.password) {
       throw new AppError(400, "Todos os campos são obrigatórios");
     }
 
     const existing = await User.findOne({ where: { email: data.email } });
-
     if (existing) {
       throw new AppError(409, "Esse email já está em uso");
     }
@@ -25,10 +25,24 @@ export class userServices {
       password: hashedPassword,
     });
 
-    const { password, ...safeUser } = newUser.toJSON();
-    return safeUser as IUserResponse;
+    const JWT_SECRET = process.env.JWT_SECRET as string;
+
+    const token = jwt.sign(
+      { id: newUser.id },
+      JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    const { password, ...safeUser } = newUser.get({ plain: true });
+
+    return {
+      user: safeUser,
+      token,
+    };
   }
-  //Busca um usuário específico
+
+
+
   async getUser(id: string): Promise<IUserResponse> {
     const user = await User.findByPk(id);
     if (!user) {
@@ -39,7 +53,7 @@ export class userServices {
     const { password, ...userWithoutPassword } = userJson;
     return userWithoutPassword as IUserResponse;
   }
-  //Busca todos os usuários
+
   async getAllUsers(): Promise<IUserResponse[]> {
     const users = await User.findAll({
       attributes: { exclude: [`password`] },
@@ -47,7 +61,7 @@ export class userServices {
 
     return users.map((user) => user.toJSON() as IUserResponse);
   }
-  //Exclui um usuário
+
   async deleteUser(id: string): Promise<string> {
     const user = await User.findByPk(id);
     if (!user) {
@@ -57,7 +71,7 @@ export class userServices {
     await user.destroy();
     return "Usuário deletado com sucesso";
   }
-  //Atualiza nam, email e senha de um usuário
+
   async updateUser(id: string, data: IUser): Promise<IUserResponse> {
     const user = await User.findByPk(id);
 

@@ -1,4 +1,5 @@
 import { config } from "dotenv";
+import "./models/associations";
 config();
 
 import app from "./app";

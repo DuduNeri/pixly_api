@@ -7,15 +7,15 @@ import { AppError } from "../utils/appError";
 dotenv.config();
 
 export class AuthService {
-  //lógica de login na plataforma, gera um token de acesso
-  async login(email: string, password: string) {
+  async login(name: string, password: string) {
     const user = await User.findOne({
-      where: { email },
+      where: { name },
     });
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
       throw new AppError(409, "Credenciais inválidas");
     }
+    console.log("LOGIN SECRET:", process.env.JWT_SECRET);
 
     const token = jwt.sign(
       {

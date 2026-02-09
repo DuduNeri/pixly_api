@@ -1,3 +1,4 @@
+// src/models/post.model.ts
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../config/db";
 import { PostAttributes, PostCreationAttributes } from "../interfaces/post.interface";
@@ -36,7 +37,7 @@ Post.init(
     },
 
     contentImage: {
-      type: DataTypes.TEXT, 
+      type: DataTypes.TEXT,
       allowNull: true,
     },
 
@@ -52,8 +53,8 @@ Post.init(
   },
   {
     sequelize,
+    modelName: "Post",
     tableName: "posts",
-    timestamps: true,
   }
 );
 

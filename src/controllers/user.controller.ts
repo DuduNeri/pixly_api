@@ -1,6 +1,7 @@
 import {
   ICreateUser,
   IUser,
+  IUserAuthResponse,
   IUserResponse,
 } from "../interfaces/user.interface";
 import { userServices } from "../services/user.service";
@@ -12,9 +13,9 @@ export class userController {
     this.UserServices = new userServices();
   }
 
-  async createUser(data: ICreateUser): Promise<IUserResponse> {
+  async createUser(data: ICreateUser): Promise<IUserAuthResponse> {
     try {
-      return this.UserServices.create(data);
+      return await this.UserServices.create(data);
     } catch (error: any) {
       throw new Error(`Erro ao criar usuário: ${error.message}`);
     }

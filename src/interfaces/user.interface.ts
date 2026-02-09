@@ -20,3 +20,7 @@ export interface IUserResponse {
   createdAt?: Date;
   updatedAt?: Date;
 }
+export interface IUserAuthResponse {
+  user: IUserResponse;
+  token: string;
+}

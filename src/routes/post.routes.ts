@@ -1,84 +1,102 @@
 import { Router, Request, Response } from "express";
 import { PostController } from "../controllers/post.controller";
 import { authMidleware } from "../middlewares/auth.middleware";
+import { upload } from "../uploads/uploads";
 
 export const postRouter = Router();
 const postController = new PostController();
 
-postRouter.post("/post", authMidleware, async (req: Request, res: Response) => {
-  try {
-    if (!req.user) {
-      return res.status(401).json({ error: "Usuário não autenticado" });
+postRouter.post(
+  "/posts",
+  authMidleware,
+  upload.single("contentImage"),
+  async (req: Request, res: Response) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({ error: "Usuário não autenticado" });
+      }
+
+      const { title, contentText } = req.body;
+      const userId = req.user.id; 
+
+      const contentImage = req.file ? req.file.filename : null;
+
+      const post = await postController.createPost({
+        title,
+        contentText,
+        userId,
+        contentImage,
+      });
+
+      return res.status(201).json(post);
+    } catch (error: any) {
+      console.error("Erro ao criar post:", error);
+      return res.status(400).json({ error: error.message });
     }
-
-    const { title, contentText, contentImage } = req.body;
-
-    const post = await postController.createPost({
-      title,
-      contentText,
-      contentImage,
-      userId: req.user.id,
-      comments: [],
-    });
-
-    res.status(201).json(post);
-  } catch (error: any) {
-    res.status(400).json({ error: error.message });
   }
-});
+);
 
-postRouter.get("/posts", authMidleware, async (req: Request, res: Response) => {
+postRouter.get("/posts", async (_req: Request, res: Response) => {
   try {
     const posts = await postController.getPosts();
-    res.status(200).json(posts);
+    return res.status(200).json(posts);
   } catch (error: any) {
-    res.status(400).json({ error: error.message });
+    return res.status(400).json({ error: error.message });
   }
 });
 
-postRouter.delete(
+
+postRouter.get(
   "/post/:id",
   authMidleware,
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-
-      if (!req.user) {
-        return res.status(401).json({ error: "Usuário não autenticado" });
-      }
-
-      const userId = req.user.id;
-
-      const post = await postController.delete(id, userId);
-
-      return res.status(200).json({
-        message: "Post deletado com sucesso",
-        post,
-      });
+      const post = await postController.getPost(id);
+      return res.status(200).json(post);
     } catch (error: any) {
       return res.status(400).json({ error: error.message });
     }
   }
 );
 
-postRouter.put("/post/:id", authMidleware,async (req: Request, res: Response) => {
-  try {
-    if (!req.user) {
-      return res.status(401).json({ error: "Não autenticado" });
+
+postRouter.delete(
+  "/post/:id",
+  authMidleware,
+  async (req: Request, res: Response) => {
+    try {
+      if (!req.user) return res.status(401).json({ error: "Não autorizado" });
+
+      const { id } = req.params;
+      const post = await postController.delete(id, req.user.id);
+
+      return res.status(200).json({ message: "Post deletado com sucesso", post });
+    } catch (error: any) {
+      return res.status(400).json({ error: error.message });
     }
-
-    const { id } = req.params;
-    const userId = req.user.id;
-    const { title, contentText, contentImage } = req.body;
-
-    const update = await postController.update(id, userId, {
-      title,
-      contentText,
-      contentImage,
-    });
-
-    res.status(200).json(update);
-  } catch (error: any) {
-    res.status(400).json({ error: error.message });
   }
-});
+);
+
+postRouter.put(
+  "/post/:id",
+  authMidleware,
+  upload.single("contentImage"), 
+  async (req: Request, res: Response) => {
+    try {
+      if (!req.user) return res.status(401).json({ error: "Não autorizado" });
+
+      const { id } = req.params;
+      const { title, contentText } = req.body;
+
+      const updateData: any = { title, contentText };
+      if (req.file) updateData.contentImage = req.file.filename;
+
+      const update = await postController.update(id, req.user.id, updateData);
+
+      return res.status(200).json(update);
+    } catch (error: any) {
+      return res.status(400).json({ error: error.message });
+    }
+  }
+);

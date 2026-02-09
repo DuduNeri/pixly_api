@@ -20,9 +20,7 @@ userRoute.get(
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-      console.log(id);
       const user = await UserController.getUse(id);
-      console.log(user);
       res.status(200).json(user);
     } catch (error: any) {
       res.status(400).json({ message: error.message });
@@ -30,7 +28,7 @@ userRoute.get(
   }
 );
 
-userRoute.get("/users", authMidleware, async (req: Request, res: Response) => {
+userRoute.get("/users", async (req: Request, res: Response) => {
   try {
     const users = await UserController.getAll();
     res.status(200).json(users);
