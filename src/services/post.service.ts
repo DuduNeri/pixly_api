@@ -49,7 +49,7 @@ export class PostService {
         include: [
           {
             model: User,
-            as: "user", 
+            as: "user",
             attributes: ["id", "name"],
           },
         ],
@@ -110,6 +110,22 @@ export class PostService {
     return this.formatPost(post);
   }
 
+  async getPostsByUser(userId: string) {
+    try {
+      const posts = await Post.findAll({
+        where: { userId },
+      });
+
+      return posts;
+    } catch (error: any) {
+      console.error("Erro ao buscar posts do usuário:", error);
+      if (error instanceof Error) {
+        throw new Error(`Erro ao buscar posts do usuário: ${error.message}`);
+      }
+      throw new Error("Erro desconhecido ao buscar posts do usuário");
+    }
+  }
+
   private formatPost(post: Post): IPosts {
     const plain = post.get({ plain: true });
 
@@ -118,7 +134,6 @@ export class PostService {
       contentImageUrl: plain.contentImage
         ? `${API_URL}/uploads/${plain.contentImage}`
         : null,
-
     };
   }
 }

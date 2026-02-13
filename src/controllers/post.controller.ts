@@ -24,15 +24,15 @@ export class PostController {
     return this.postService.getPost(id);
   }
 
+  getPostUser(userId: string) {
+    return this.postService.getPostsByUser(userId);
+  }
+
   delete(id: string, userId: string) {
     return this.postService.deletePost(id, userId);
   }
 
-  update(
-    id: string,
-    userId: string,
-    data: UpdatePostDTO
-  ): Promise<IPosts> {
+  update(id: string, userId: string, data: UpdatePostDTO): Promise<IPosts> {
     return this.postService.updatePost(id, userId, data);
   }
 }

@@ -17,7 +17,7 @@ postRouter.post(
       }
 
       const { title, contentText } = req.body;
-      const userId = req.user.id; 
+      const userId = req.user.id;
 
       const contentImage = req.file ? req.file.filename : null;
 
@@ -33,7 +33,7 @@ postRouter.post(
       console.error("Erro ao criar post:", error);
       return res.status(400).json({ error: error.message });
     }
-  }
+  },
 );
 
 postRouter.get("/posts", async (_req: Request, res: Response) => {
@@ -44,7 +44,6 @@ postRouter.get("/posts", async (_req: Request, res: Response) => {
     return res.status(400).json({ error: error.message });
   }
 });
-
 
 postRouter.get(
   "/post/:id",
@@ -57,9 +56,27 @@ postRouter.get(
     } catch (error: any) {
       return res.status(400).json({ error: error.message });
     }
-  }
+  },
 );
 
+postRouter.get("/:userId", async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+
+    if (!userId) {
+      return res.status(400).json({ message: "userId é obrigatório" });
+    }
+    const posts = await postController.getPostUser(userId);
+
+    return res.status(200).json(posts);
+  } catch (error: unknown) {
+    console.error("Erro na rota getPostsByUser:", error);
+    if (error instanceof Error) {
+      return res.status(500).json({ message: error.message });
+    }
+    return res.status(500).json({ message: "Erro interno do servidor" });
+  }
+});
 
 postRouter.delete(
   "/post/:id",
@@ -71,17 +88,19 @@ postRouter.delete(
       const { id } = req.params;
       const post = await postController.delete(id, req.user.id);
 
-      return res.status(200).json({ message: "Post deletado com sucesso", post });
+      return res
+        .status(200)
+        .json({ message: "Post deletado com sucesso", post });
     } catch (error: any) {
       return res.status(400).json({ error: error.message });
     }
-  }
+  },
 );
 
 postRouter.put(
   "/post/:id",
   authMidleware,
-  upload.single("contentImage"), 
+  upload.single("contentImage"),
   async (req: Request, res: Response) => {
     try {
       if (!req.user) return res.status(401).json({ error: "Não autorizado" });
@@ -98,5 +117,5 @@ postRouter.put(
     } catch (error: any) {
       return res.status(400).json({ error: error.message });
     }
-  }
+  },
 );
