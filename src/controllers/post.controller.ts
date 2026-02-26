@@ -2,6 +2,7 @@ import {
   PostCreationAttributes,
   IPosts,
   UpdatePostDTO,
+  type CommentAttributes,
 } from "../interfaces/post.interface";
 import { PostService } from "../services/post.service";
 
@@ -32,7 +33,11 @@ export class PostController {
     return this.postService.deletePost(id, userId);
   }
 
-  update(id: string, userId: string, data: UpdatePostDTO): Promise<IPosts> {
-    return this.postService.updatePost(id, userId, data);
+  // update(id: string, userId: string, data: UpdatePostDTO): Promise<IPosts> {
+  //   return this.postService.updatePost(id, userId, data);
+  // }
+
+  createComment(data: CommentAttributes){
+    return this.postService.createComment(data)
   }
 }

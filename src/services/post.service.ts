@@ -2,10 +2,13 @@ import {
   IPosts,
   PostCreationAttributes,
   UpdatePostDTO,
+  type CommentAttributes,
+  type PostAttributes,
 } from "../interfaces/post.interface";
 import { AppError } from "../utils/appError";
 import Post from "../models/post.model";
 import User from "../models/user.model";
+import Comment from "../models/commetns.model";
 
 const API_URL = process.env.API_URL ?? "http://localhost:3333";
 
@@ -35,6 +38,16 @@ export class PostService {
     }
   }
 
+  async createComment(data: CommentAttributes) {
+  try {
+    const comment = await Comment.create(data);
+    return comment;
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+}
+
+
   async getPostsByUsers(
     page: number = 1,
     limit: number = 10,
@@ -58,7 +71,9 @@ export class PostService {
       if (!posts.length) {
         throw new AppError(404, "Nenhum post encontrado");
       }
-
+      if(posts.length === 0){
+         throw new AppError(404, "Nenhum post encontrado");
+      }
       return posts.map((post) => this.formatPost(post));
     } catch (error: any) {
       if (error instanceof AppError) throw error;
@@ -91,24 +106,24 @@ export class PostService {
     return { message: "Post excluído com sucesso" };
   }
 
-  async updatePost(
-    id: string,
-    userId: string,
-    data: UpdatePostDTO,
-  ): Promise<IPosts> {
-    const post = await Post.findByPk(id);
+  // async updatePost(
+  //   id: string,
+  //   userId: string,
+  //   data: UpdatePostDTO,
+  // ): Promise<IPosts> {
+  //   const post = await Post.findByPk(id);
 
-    if (!post) {
-      throw new AppError(404, "Post não encontrado");
-    }
+  //   if (!post) {
+  //     throw new AppError(404, "Post não encontrado");
+  //   }
 
-    if (post.userId !== userId) {
-      throw new AppError(403, "Sem permissão para editar este post");
-    }
+  //   if (post.userId !== userId) {
+  //     throw new AppError(403, "Sem permissão para editar este post");
+  //   }
 
-    await post.update(data);
-    return this.formatPost(post);
-  }
+  //   await post.update(data);
+  //   return this.formatPost(post);
+  // }
 
   async getPostsByUser(userId: string) {
     try {

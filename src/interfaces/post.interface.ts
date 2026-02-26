@@ -9,6 +9,17 @@ export interface PostAttributes {
   userId: string;
 }
 
+export interface CommentAttributes {
+  id: string;
+  content: string;
+  postId: string;
+  userId: string;
+}
+
+export interface CommentCreationAttributes
+  extends Optional<CommentAttributes, "id"> {}
+
+
 export interface IPosts {
   id: string;
   title?: string;
@@ -21,11 +32,16 @@ export interface IPosts {
   updatedAt?: string;
 }
 
-
 export interface UpdatePostDTO {
   title?: string;
   contentText?: string | null;
   contentImage?: string | null;
+  comments?: {
+    id: string;
+    content: string;
+    userId: string;
+    createdAt: Date;
+  }[];
 }
 export interface PostResponseDTO {
   id: string;
@@ -42,9 +58,7 @@ export interface PostResponseDTO {
   };
 }
 
-
-export interface PostCreationAttributes
-  extends Optional<
-    PostAttributes,
-    "id" | "title" | "contentText" | "contentImage" | "comments"
-  > {}
+export interface PostCreationAttributes extends Optional<
+  PostAttributes,
+  "id" | "title" | "contentText" | "contentImage" | "comments"
+> {}

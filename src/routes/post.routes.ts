@@ -36,7 +36,7 @@ postRouter.post(
   },
 );
 
-postRouter.get("/posts", async (_req: Request, res: Response) => {
+postRouter.get("/posts", authMidleware, async (_req: Request, res: Response) => {
   try {
     const posts = await postController.getPosts();
     return res.status(200).json(posts);
@@ -59,7 +59,7 @@ postRouter.get(
   },
 );
 
-postRouter.get("/:userId", async (req: Request, res: Response) => {
+postRouter.get("/:userId", authMidleware, async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
 
@@ -97,25 +97,27 @@ postRouter.delete(
   },
 );
 
-postRouter.put(
-  "/post/:id",
-  authMidleware,
-  upload.single("contentImage"),
-  async (req: Request, res: Response) => {
-    try {
-      if (!req.user) return res.status(401).json({ error: "Não autorizado" });
+// postRouter.put(
+//   "/post/:id",
+//   authMidleware,
+//   upload.single("contentImage"),
+//   async (req: Request, res: Response) => {
+//     try {
+//       if (!req.user) return res.status(401).json({ error: "Não autorizado" });
 
-      const { id } = req.params;
-      const { title, contentText } = req.body;
+//       const { id } = req.params;
+//       const { title, contentText } = req.body;
 
-      const updateData: any = { title, contentText };
-      if (req.file) updateData.contentImage = req.file.filename;
+//       const updateData: any = { title, contentText };
+//       if (req.file) updateData.contentImage = req.file.filename;
 
-      const update = await postController.update(id, req.user.id, updateData);
+//       const update = await postController.update(id, req.user.id, updateData);
 
-      return res.status(200).json(update);
-    } catch (error: any) {
-      return res.status(400).json({ error: error.message });
-    }
-  },
-);
+//       return res.status(200).json(update);
+//     } catch (error: any) {
+//       return res.status(400).json({ error: error.message });
+//     }
+//   },
+// );
+
+// postRouter.post("/posts/comment", async)

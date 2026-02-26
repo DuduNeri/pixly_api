@@ -4,7 +4,7 @@ import { Request, Response, NextFunction } from "express";
 export async function authMidleware(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   const authHeader = req.headers.authorization;
 
@@ -18,28 +18,25 @@ export async function authMidleware(
     return res.status(401).json({ message: "Token inválido" });
   }
 
-try {
-  const decoded = jwt.verify(
-    token,
-    process.env.JWT_SECRET || "secret"
-  ) as {
-    id: string;
-    email: string;
-    name: string;
-  }; 
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret") as {
+      id: string;
+      email: string;
+      name: string;
+    };
 
-  if (!decoded.id) { 
-    return res.status(401).json({ message: "Token inválido: falta ID" });
+    if (!decoded.id) {
+      return res.status(401).json({ message: "Token inválido: falta ID" });
+    }
+
+    req.user = {
+      id: decoded.id,
+      email: decoded.email || "",
+      name: decoded.name || "",
+    };
+
+    next();
+  } catch (error) {
+    return res.status(401).json({ message: "Token inválido ou expirado" });
   }
-
-  req.user = {
-    id: decoded.id,
-    email: decoded.email || "", 
-    name: decoded.name || "",
-  };
-
-  next();
-} catch (error) {
-  return res.status(401).json({ message: "Token inválido ou expirado" });
-}
 }
