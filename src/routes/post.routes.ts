@@ -30,7 +30,6 @@ postRouter.post(
 
       return res.status(201).json(post);
     } catch (error: any) {
-      console.error("Erro ao criar post:", error);
       return res.status(400).json({ error: error.message });
     }
   },
@@ -59,7 +58,7 @@ postRouter.get(
   },
 );
 
-postRouter.get("/:userId", authMidleware, async (req: Request, res: Response) => {
+postRouter.get("/:userId", async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
 
@@ -70,7 +69,6 @@ postRouter.get("/:userId", authMidleware, async (req: Request, res: Response) =>
 
     return res.status(200).json(posts);
   } catch (error: unknown) {
-    console.error("Erro na rota getPostsByUser:", error);
     if (error instanceof Error) {
       return res.status(500).json({ message: error.message });
     }
@@ -97,27 +95,25 @@ postRouter.delete(
   },
 );
 
-// postRouter.put(
-//   "/post/:id",
-//   authMidleware,
-//   upload.single("contentImage"),
-//   async (req: Request, res: Response) => {
-//     try {
-//       if (!req.user) return res.status(401).json({ error: "Não autorizado" });
+postRouter.put(
+  "/post/:id",
+  authMidleware,
+  upload.single("contentImage"),
+  async (req: Request, res: Response) => {
+    try {
+      if (!req.user) return res.status(401).json({ error: "Não autorizado" });
 
-//       const { id } = req.params;
-//       const { title, contentText } = req.body;
+      const { id } = req.params;
+      const { title, contentText } = req.body;
 
-//       const updateData: any = { title, contentText };
-//       if (req.file) updateData.contentImage = req.file.filename;
+      const updateData: any = { title, contentText };
+      if (req.file) updateData.contentImage = req.file.filename;
 
-//       const update = await postController.update(id, req.user.id, updateData);
+      const update = await postController.update(id, req.user.id, updateData);
 
-//       return res.status(200).json(update);
-//     } catch (error: any) {
-//       return res.status(400).json({ error: error.message });
-//     }
-//   },
-// );
-
-// postRouter.post("/posts/comment", async)
+      return res.status(200).json(update);
+    } catch (error: any) {
+      return res.status(400).json({ error: error.message });
+    }
+  },
+);

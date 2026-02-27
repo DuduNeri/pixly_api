@@ -32,7 +32,7 @@ export interface IPosts {
   updatedAt?: string;
 }
 
-export interface UpdatePostDTO {
+export interface PostDTO {
   title?: string;
   contentText?: string | null;
   contentImage?: string | null;
@@ -43,6 +43,13 @@ export interface UpdatePostDTO {
     createdAt: Date;
   }[];
 }
+
+export interface UpdatePostDTO {
+  title?: string;
+  contentText?: string;
+  contentImage?: string;
+}
+
 export interface PostResponseDTO {
   id: string;
   title?: string;
