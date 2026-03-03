@@ -127,6 +127,7 @@ export class PostService {
     try {
       const posts = await Post.findAll({
         where: { userId },
+        order: [["createdAt", "DESC"]],
       });
 
       return posts;
