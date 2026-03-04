@@ -28,7 +28,7 @@ userRoute.get(
   }
 );
 
-userRoute.get("/users", async (req: Request, res: Response) => {
+userRoute.get("/users", authMidleware, async (req: Request, res: Response) => {
   try {
     const users = await UserController.getAll();
     res.status(200).json(users);

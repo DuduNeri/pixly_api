@@ -58,7 +58,7 @@ postRouter.get(
   },
 );
 
-postRouter.get("/posts/:userId", async (req: Request, res: Response) => {
+postRouter.get("/posts/:userId", authMidleware, async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
 

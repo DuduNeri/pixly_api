@@ -8,6 +8,7 @@ import { AppError } from "../utils/appError";
 import Post from "../models/post.model";
 import User from "../models/user.model";
 import Comment from "../models/commetns.model";
+import { Model } from "sequelize";
 
 const API_URL = process.env.API_URL ?? "http://localhost:3333";
 
@@ -127,6 +128,13 @@ export class PostService {
     try {
       const posts = await Post.findAll({
         where: { userId },
+        include: [
+          {
+            model: User,
+            as: "user",
+            attributes: ["id", "name"],
+          },
+        ],
         order: [["createdAt", "DESC"]],
       });
 
