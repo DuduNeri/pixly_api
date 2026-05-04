@@ -65,6 +65,14 @@ export interface PostResponseDTO {
   };
 }
 
+export interface LikeAttributes {
+  id: string;
+  userId: string;
+  postId: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
 export interface PostCreationAttributes extends Optional<
   PostAttributes,
   "id" | "title" | "contentText" | "contentImage" | "comments"

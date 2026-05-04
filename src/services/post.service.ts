@@ -70,9 +70,11 @@ export class PostService {
       if (!posts.length) {
         throw new AppError(404, "Nenhum post encontrado");
       }
+      
       if (posts.length === 0) {
         throw new AppError(404, "Nenhum post encontrado");
       }
+
       return posts.map((post) => this.formatPost(post));
     } catch (error: any) {
       if (error instanceof AppError) throw error;
@@ -145,6 +147,9 @@ export class PostService {
       }
       throw new Error("Erro desconhecido ao buscar posts do usuário");
     }
+  }
+  async createLike(){
+
   }
 
   private formatPost(post: Post): IPosts {

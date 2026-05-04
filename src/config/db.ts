@@ -24,6 +24,7 @@ export async function connectDB() {
 
   } catch (error) {
     console.error("❌ Erro ao conectar ao banco:", error);
+    console.log(error)
     process.exit(1);
   }
 }
