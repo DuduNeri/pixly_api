@@ -17,7 +17,7 @@ export const sequelize = new Sequelize(
 export async function connectDB() {
   try {
     await sequelize.authenticate();
-    console.log("🔥 Conectado ao banco com sucesso!");
+    console.log("Conectado ao banco com sucesso!");
 
     await sequelize.sync({ alter: true });
     console.log("📦 Tabelas sincronizadas com sucesso!");

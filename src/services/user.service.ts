@@ -17,6 +17,11 @@ export class userServices {
       throw new AppError(409, "Esse email já está em uso");
     }
 
+    const nameExisting = await User.findOne({ where: { name: data.name } });
+    if (nameExisting) {
+      throw new AppError(409, "Esse nome já está em uso");
+    }
+
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
     const newUser = await User.create({
@@ -40,8 +45,6 @@ export class userServices {
       token,
     };
   }
-
-
 
   async getUser(id: string): Promise<IUserResponse> {
     const user = await User.findByPk(id);

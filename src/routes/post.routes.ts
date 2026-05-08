@@ -59,7 +59,7 @@ postRouter.get(
   },
 );
 
-postRouter.get("/:userId", async (req: Request, res: Response) => {
+postRouter.get("/posts/:userId",  async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
 
