@@ -9,6 +9,7 @@ export class Post
 {
   public id!: string;
   public title?: string;
+  public avatar?: string;
   public contentText?: string | null;
   public contentImage?: string | null;
   public comments!: string[];

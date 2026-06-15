@@ -15,7 +15,6 @@ export class AuthService {
     if (!user || !(await bcrypt.compare(password, user.password))) {
       throw new AppError(409, "Credenciais inválidas");
     }
-    console.log("LOGIN SECRET:", process.env.JWT_SECRET);
 
     const token = jwt.sign(
       {

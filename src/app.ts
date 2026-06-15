@@ -18,5 +18,6 @@ app.use("/api", loginRouter);
 app.use("/api", postRouter);
 app.use("/test", router)
 app.use('/uploads', express.static(path.resolve(__dirname, '..', 'uploads')));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 export default app;

@@ -1,11 +1,14 @@
+import { UpdatePhoto, UpdatePostDTO } from "./../interfaces/post.interface";
 import {
   IPosts,
   PostCreationAttributes,
-  UpdatePostDTO,
+  type CommentAttributes,
 } from "../interfaces/post.interface";
 import { AppError } from "../utils/appError";
 import Post from "../models/post.model";
 import User from "../models/user.model";
+import Comment from "../models/commetns.model";
+import { Model } from "sequelize";
 
 const API_URL = process.env.API_URL ?? "http://localhost:3333";
 
@@ -35,6 +38,15 @@ export class PostService {
     }
   }
 
+  async createComment(data: CommentAttributes) {
+    try {
+      const comment = await Comment.create(data);
+      return comment;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
   async getPostsByUsers(
     page: number = 1,
     limit: number = 10,
@@ -50,7 +62,7 @@ export class PostService {
           {
             model: User,
             as: "user",
-            attributes: ["id", "name"],
+            attributes: ["id", "name", "avatar"],
           },
         ],
       });
@@ -58,7 +70,9 @@ export class PostService {
       if (!posts.length) {
         throw new AppError(404, "Nenhum post encontrado");
       }
-
+      if (posts.length === 0) {
+        throw new AppError(404, "Nenhum post encontrado");
+      }
       return posts.map((post) => this.formatPost(post));
     } catch (error: any) {
       if (error instanceof AppError) throw error;
@@ -114,16 +128,50 @@ export class PostService {
     try {
       const posts = await Post.findAll({
         where: { userId },
+        include: [
+          {
+            model: User,
+            as: "user",
+            attributes: ["id", "name"],
+          },
+        ],
+        order: [["createdAt", "DESC"]],
       });
 
       return posts;
     } catch (error: any) {
-      console.error("Erro ao buscar posts do usuário:", error);
       if (error instanceof Error) {
         throw new Error(`Erro ao buscar posts do usuário: ${error.message}`);
       }
       throw new Error("Erro desconhecido ao buscar posts do usuário");
     }
+  }
+
+  async profilePicture(data: UpdatePhoto) {
+    const user = await User.findByPk(data.userId);
+
+    if (!user) {
+      throw new AppError(404, "Usuário não encontrado");
+    }
+
+    user.avatar = data.avatar;
+
+    await user.save();
+
+    return user;
+  }
+
+  async getProfilePicture(data: UpdatePhoto) {
+    const user = await User.findByPk(data.userId);
+
+    if (!user) {
+      throw new AppError(404, "Usuário não encontrado");
+    }
+
+    return {
+      userId: user.id,
+      avatar: user.avatar,
+    };
   }
 
   private formatPost(post: Post): IPosts {

@@ -30,10 +30,45 @@ postRouter.post(
 
       return res.status(201).json(post);
     } catch (error: any) {
-      console.error("Erro ao criar post:", error);
       return res.status(400).json({ error: error.message });
     }
   },
+);
+
+postRouter.post(
+  "/posts/:userId",
+  upload.single("avatar"),
+  async (req: Request, res: Response) => {
+    try {
+      const { userId } = req.params;
+
+      if (!req.file) {
+        return res.status(400).json({
+          error: "Nenhuma imagem enviada",
+        });
+      }
+
+      // O nome do arquivo gerado pelo Multer (ex: 1718293821-foto.jpg)
+      const avatarFileName = req.file.filename;
+
+      // 💡 PASSO IMPORTANTE QUE FALTA:
+      // Aqui você deve chamar o seu serviço/banco de dados para salvar 
+      // o `avatarFileName` na coluna `avatar` do usuário correspondente ao `userId`.
+      // Exemplo fictício:
+      // await db.user.update({ where: { id: userId }, data: { avatar: avatarFileName } });
+
+      // Retorne o nome do arquivo para o Frontend atualizar o localStorage e o Estado!
+      return res.status(200).json({
+        message: "Imagem atualizada com sucesso",
+        avatar: avatarFileName, // <--- Mandando de volta para o React
+      });
+
+    } catch (error: any) {
+      return res.status(500).json({
+        error: error.message,
+      });
+    }
+  }
 );
 
 postRouter.get("/posts", async (_req: Request, res: Response) => {
@@ -47,7 +82,6 @@ postRouter.get("/posts", async (_req: Request, res: Response) => {
 
 postRouter.get(
   "/post/:id",
-  authMidleware,
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
@@ -59,7 +93,7 @@ postRouter.get(
   },
 );
 
-postRouter.get("/posts/:userId",  async (req: Request, res: Response) => {
+postRouter.get("/posts/:userId", authMidleware, async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
 
@@ -70,7 +104,6 @@ postRouter.get("/posts/:userId",  async (req: Request, res: Response) => {
 
     return res.status(200).json(posts);
   } catch (error: unknown) {
-    console.error("Erro na rota getPostsByUser:", error);
     if (error instanceof Error) {
       return res.status(500).json({ message: error.message });
     }
@@ -119,3 +152,16 @@ postRouter.put(
     }
   },
 );
+
+// postRouter.post(
+//   "/:userId",
+//   upload.single("contentImage"),
+//   (req, res) => {
+//     console.log(req.file);
+
+//     return res.json({
+//       file: req.file,
+//       body: req.body,
+//     });
+//   }
+// );

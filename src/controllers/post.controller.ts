@@ -2,6 +2,9 @@ import {
   PostCreationAttributes,
   IPosts,
   UpdatePostDTO,
+  type CommentAttributes,
+  UpdatePhoto,
+  UpdatePhotoResponse,
 } from "../interfaces/post.interface";
 import { PostService } from "../services/post.service";
 
@@ -34,5 +37,17 @@ export class PostController {
 
   update(id: string, userId: string, data: UpdatePostDTO): Promise<IPosts> {
     return this.postService.updatePost(id, userId, data);
+  }
+
+  createComment(data: CommentAttributes){
+    return this.postService.createComment(data)
+  }
+
+  avatar(data: UpdatePhoto){
+   return this.postService.profilePicture(data)
+  }
+
+  getAvatar(data: UpdatePhoto) {
+    return this.postService.profilePicture(data);
   }
 }
