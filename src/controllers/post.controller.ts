@@ -4,7 +4,7 @@ import {
   UpdatePostDTO,
   type CommentAttributes,
   UpdatePhoto,
-  UpdatePhotoResponse,
+  
 } from "../interfaces/post.interface";
 import { PostService } from "../services/post.service";
 
@@ -44,10 +44,10 @@ export class PostController {
   }
 
   avatar(data: UpdatePhoto){
-   return this.postService.profilePicture(data)
+   return this.postService.getProfilePicture(data)
   }
 
   getAvatar(data: UpdatePhoto) {
-    return this.postService.profilePicture(data);
+    return this.postService.getAvatar(data);
   }
 }

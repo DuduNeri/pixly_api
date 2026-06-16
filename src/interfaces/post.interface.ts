@@ -7,6 +7,11 @@ export interface PostAttributes {
   contentImage?: string | null;
   comments: string[];
   userId: string;
+  avatar?: string;
+}
+
+export interface GetAvatarDTO {
+  userId: string;
 }
 
 export interface CommentAttributes {
@@ -48,7 +53,7 @@ export interface UpdatePostDTO {
   title?: string;
   contentText?: string;
   contentImage?: string;
-  avatar: string;
+  avatar?: string;
 }
 
 export interface UpdatePhoto {

@@ -1,4 +1,4 @@
-import { UpdatePhoto, UpdatePostDTO } from "./../interfaces/post.interface";
+import { GetAvatarDTO, UpdatePhoto, UpdatePostDTO } from "./../interfaces/post.interface";
 import {
   IPosts,
   PostCreationAttributes,
@@ -32,6 +32,7 @@ export class PostService {
         contentImage: data.contentImage,
         comments: data.comments ?? [],
         userId: data.userId,
+        avatar: data.avatar,
       });
     } catch (error: any) {
       throw new AppError(400, `Erro ao criar post: ${error.message}`);
@@ -147,18 +148,16 @@ export class PostService {
     }
   }
 
-  async profilePicture(data: UpdatePhoto) {
+  async getAvatar(data: GetAvatarDTO) {
     const user = await User.findByPk(data.userId);
 
     if (!user) {
       throw new AppError(404, "Usuário não encontrado");
     }
 
-    user.avatar = data.avatar;
-
-    await user.save();
-
-    return user;
+    return {
+      avatar: user.avatar,
+    };
   }
 
   async getProfilePicture(data: UpdatePhoto) {

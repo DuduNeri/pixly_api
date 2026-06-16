@@ -51,6 +51,10 @@ Post.init(
       type: DataTypes.UUID,
       allowNull: false,
     },
+    avatar: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   },
   {
     sequelize,

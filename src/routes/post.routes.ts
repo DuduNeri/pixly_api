@@ -16,7 +16,7 @@ postRouter.post(
         return res.status(401).json({ error: "Usuário não autenticado" });
       }
 
-      const { title, contentText } = req.body;
+      const { title, contentText, avatar } = req.body;
       const userId = req.user.id;
 
       const contentImage = req.file ? req.file.filename : null;
@@ -26,6 +26,7 @@ postRouter.post(
         contentText,
         userId,
         contentImage,
+        avatar
       });
 
       return res.status(201).json(post);
@@ -77,6 +78,21 @@ postRouter.get("/posts", async (_req: Request, res: Response) => {
     return res.status(200).json(posts);
   } catch (error: any) {
     return res.status(400).json({ error: error.message });
+  }
+});
+
+postRouter.get("/posts/avatar/:userId", async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+
+    const avatar = await postController.getAvatar({
+      userId,
+      avatar: "",
+    });
+
+    return res.status(200).json(avatar);
+  } catch (error: any) {
+    return res.status(400).json({ message: error.message });
   }
 });
 
