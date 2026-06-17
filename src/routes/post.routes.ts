@@ -13,35 +13,48 @@ postRouter.post(
   async (req: Request, res: Response) => {
     try {
       if (!req.user) {
-        return res.status(401).json({ error: "Usuário não autenticado" });
+        return res.status(401).json({
+          error: "Usuário não autenticado",
+        });
       }
 
       const { title, contentText, avatar } = req.body;
-      const userId = req.user.id;
 
-      const contentImage = req.file ? req.file.filename : null;
+      const contentImage = req.file
+        ? req.file.filename
+        : null;
 
       const post = await postController.createPost({
         title,
         contentText,
-        userId,
+        userId: req.user.id,
         contentImage,
-        avatar
+        avatar,
       });
 
       return res.status(201).json(post);
     } catch (error: any) {
-      return res.status(400).json({ error: error.message });
+      return res.status(400).json({
+        error: error.message,
+      });
     }
-  },
+  }
 );
 
 postRouter.post(
-  "/posts/:userId",
+  "/posts/avatar",
+  authMidleware,
   upload.single("avatar"),
   async (req: Request, res: Response) => {
     try {
-      const { userId } = req.params;
+
+      console.log("USER:", req.user);
+      console.log("FILE:", req.file);
+      if (!req.user) {
+        return res.status(401).json({
+          error: "Usuário não autenticado",
+        });
+      }
 
       if (!req.file) {
         return res.status(400).json({
@@ -49,21 +62,18 @@ postRouter.post(
         });
       }
 
-      // O nome do arquivo gerado pelo Multer (ex: 1718293821-foto.jpg)
       const avatarFileName = req.file.filename;
+      console.log(avatarFileName)
 
-      // 💡 PASSO IMPORTANTE QUE FALTA:
-      // Aqui você deve chamar o seu serviço/banco de dados para salvar 
-      // o `avatarFileName` na coluna `avatar` do usuário correspondente ao `userId`.
-      // Exemplo fictício:
-      // await db.user.update({ where: { id: userId }, data: { avatar: avatarFileName } });
-
-      // Retorne o nome do arquivo para o Frontend atualizar o localStorage e o Estado!
+      await postController.updateAvatar({
+        userId: req.user.id,
+        avatar: avatarFileName,
+      });
+    
       return res.status(200).json({
         message: "Imagem atualizada com sucesso",
-        avatar: avatarFileName, // <--- Mandando de volta para o React
+        avatar: avatarFileName,
       });
-
     } catch (error: any) {
       return res.status(500).json({
         error: error.message,
@@ -72,78 +82,111 @@ postRouter.post(
   }
 );
 
-postRouter.get("/posts", async (_req: Request, res: Response) => {
-  try {
-    const posts = await postController.getPosts();
-    return res.status(200).json(posts);
-  } catch (error: any) {
-    return res.status(400).json({ error: error.message });
+postRouter.get(
+  "/posts",
+  authMidleware,
+  async (_req: Request, res: Response) => {
+    try {
+      const posts = await postController.getPosts();
+
+      return res.status(200).json(posts);
+    } catch (error: any) {
+      return res.status(400).json({
+        error: error.message,
+      });
+    }
   }
-});
+);
 
-postRouter.get("/posts/avatar/:userId", async (req: Request, res: Response) => {
-  try {
-    const { userId } = req.params;
+postRouter.get(
+  "/posts/avatar",
+  authMidleware,
+  async (req: Request, res: Response) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({
+          error: "Usuário não autenticado",
+        });
+      }
 
-    const avatar = await postController.getAvatar({
-      userId,
-      avatar: "",
-    });
+      const avatar = await postController.getAvatar({
+        userId: req.user.id,
+        avatar: "",
+      });
 
-    return res.status(200).json(avatar);
-  } catch (error: any) {
-    return res.status(400).json({ message: error.message });
+      return res.status(200).json(avatar);
+    } catch (error: any) {
+      return res.status(400).json({
+        message: error.message,
+      });
+    }
   }
-});
+);
 
 postRouter.get(
   "/post/:id",
+  authMidleware,
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
+
       const post = await postController.getPost(id);
+
       return res.status(200).json(post);
     } catch (error: any) {
-      return res.status(400).json({ error: error.message });
+      return res.status(400).json({
+        error: error.message,
+      });
     }
-  },
+  }
 );
 
-postRouter.get("/posts/:userId", authMidleware, async (req: Request, res: Response) => {
-  try {
-    const { userId } = req.params;
+postRouter.get(
+  "/posts/:userId",
+  authMidleware,
+  async (req: Request, res: Response) => {
+    try {
+      const { userId } = req.params;
 
-    if (!userId) {
-      return res.status(400).json({ message: "userId é obrigatório" });
-    }
-    const posts = await postController.getPostUser(userId);
+      const posts = await postController.getPostUser(userId);
 
-    return res.status(200).json(posts);
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      return res.status(500).json({ message: error.message });
+      return res.status(200).json(posts);
+    } catch (error: any) {
+      return res.status(500).json({
+        message: error.message,
+      });
     }
-    return res.status(500).json({ message: "Erro interno do servidor" });
   }
-});
+);
 
 postRouter.delete(
   "/post/:id",
   authMidleware,
   async (req: Request, res: Response) => {
     try {
-      if (!req.user) return res.status(401).json({ error: "Não autorizado" });
+      if (!req.user) {
+        return res.status(401).json({
+          error: "Não autorizado",
+        });
+      }
 
       const { id } = req.params;
-      const post = await postController.delete(id, req.user.id);
 
-      return res
-        .status(200)
-        .json({ message: "Post deletado com sucesso", post });
+      const post = await postController.delete(
+        id,
+        req.user.id
+      );
+
+      return res.status(200).json({
+        message: "Post deletado com sucesso",
+        post,
+      });
     } catch (error: any) {
-      return res.status(400).json({ error: error.message });
+      return res.status(400).json({
+        error: error.message,
+      });
     }
-  },
+  }
 );
 
 postRouter.put(
@@ -152,32 +195,35 @@ postRouter.put(
   upload.single("contentImage"),
   async (req: Request, res: Response) => {
     try {
-      if (!req.user) return res.status(401).json({ error: "Não autorizado" });
+      if (!req.user) {
+        return res.status(401).json({
+          error: "Não autorizado",
+        });
+      }
 
       const { id } = req.params;
       const { title, contentText } = req.body;
 
-      const updateData: any = { title, contentText };
-      if (req.file) updateData.contentImage = req.file.filename;
+      const updateData: any = {
+        title,
+        contentText,
+      };
 
-      const update = await postController.update(id, req.user.id, updateData);
+      if (req.file) {
+        updateData.contentImage = req.file.filename;
+      }
+
+      const update = await postController.update(
+        id,
+        req.user.id,
+        updateData
+      );
 
       return res.status(200).json(update);
     } catch (error: any) {
-      return res.status(400).json({ error: error.message });
+      return res.status(400).json({
+        error: error.message,
+      });
     }
-  },
+  }
 );
-
-// postRouter.post(
-//   "/:userId",
-//   upload.single("contentImage"),
-//   (req, res) => {
-//     console.log(req.file);
-
-//     return res.json({
-//       file: req.file,
-//       body: req.body,
-//     });
-//   }
-// );

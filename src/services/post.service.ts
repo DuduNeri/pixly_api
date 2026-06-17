@@ -160,12 +160,16 @@ export class PostService {
     };
   }
 
-  async getProfilePicture(data: UpdatePhoto) {
+  async updateAvatar(data: UpdatePhoto) {
     const user = await User.findByPk(data.userId);
 
     if (!user) {
       throw new AppError(404, "Usuário não encontrado");
     }
+
+    await user.update({
+      avatar: data.avatar,
+    });
 
     return {
       userId: user.id,

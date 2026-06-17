@@ -2,10 +2,10 @@ import {
   PostCreationAttributes,
   IPosts,
   UpdatePostDTO,
-  type CommentAttributes,
+  CommentAttributes,
   UpdatePhoto,
-  
 } from "../interfaces/post.interface";
+
 import { PostService } from "../services/post.service";
 
 export class PostController {
@@ -35,16 +35,24 @@ export class PostController {
     return this.postService.deletePost(id, userId);
   }
 
-  update(id: string, userId: string, data: UpdatePostDTO): Promise<IPosts> {
-    return this.postService.updatePost(id, userId, data);
+  update(
+    id: string,
+    userId: string,
+    data: UpdatePostDTO
+  ): Promise<IPosts> {
+    return this.postService.updatePost(
+      id,
+      userId,
+      data
+    );
   }
 
-  createComment(data: CommentAttributes){
-    return this.postService.createComment(data)
+  createComment(data: CommentAttributes) {
+    return this.postService.createComment(data);
   }
 
-  avatar(data: UpdatePhoto){
-   return this.postService.getProfilePicture(data)
+  updateAvatar(data: UpdatePhoto) {
+    return this.postService.updateAvatar(data);
   }
 
   getAvatar(data: UpdatePhoto) {
