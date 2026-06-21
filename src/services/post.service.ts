@@ -1,4 +1,8 @@
-import { GetAvatarDTO, UpdatePhoto, UpdatePostDTO } from "./../interfaces/post.interface";
+import {
+  GetAvatarDTO,
+  UpdatePhoto,
+  UpdatePostDTO,
+} from "./../interfaces/post.interface";
 import {
   IPosts,
   PostCreationAttributes,
@@ -8,7 +12,7 @@ import { AppError } from "../utils/appError";
 import Post from "../models/post.model";
 import User from "../models/user.model";
 import Comment from "../models/commetns.model";
-import { Model } from "sequelize";
+import Like from "../models/like.model";
 
 const API_URL = process.env.API_URL ?? "http://localhost:3333";
 
@@ -51,6 +55,7 @@ export class PostService {
   async getPostsByUsers(
     page: number = 1,
     limit: number = 10,
+    currentUserId?: string | null,
   ): Promise<IPosts[]> {
     try {
       const offset = (page - 1) * limit;
@@ -65,16 +70,20 @@ export class PostService {
             as: "user",
             attributes: ["id", "name", "avatar"],
           },
+          {
+            model: Like,
+            as: "likes",
+            attributes: ["userId"],
+          },
         ],
       });
 
       if (!posts.length) {
         throw new AppError(404, "Nenhum post encontrado");
       }
-      if (posts.length === 0) {
-        throw new AppError(404, "Nenhum post encontrado");
-      }
-      return posts.map((post) => this.formatPost(post));
+
+
+      return posts.map((post) => this.formatPost(post, currentUserId));
     } catch (error: any) {
       if (error instanceof AppError) throw error;
       throw new AppError(400, `Erro ao buscar posts: ${error.message}`);
@@ -177,14 +186,58 @@ export class PostService {
     };
   }
 
-  private formatPost(post: Post): IPosts {
+  async createLike(userId: string, postId: string) {
+    const likeExists = await Like.findOne({
+      where: {
+        userId,
+        postId,
+      },
+    });
+
+    if (likeExists) {
+      await likeExists.destroy();
+
+      const likesCount = await Like.count({
+        where: { postId },
+      });
+
+      return {
+        liked: false,
+        likesCount,
+      };
+    }
+
+    await Like.create({
+      userId,
+      postId,
+    });
+
+    const likesCount = await Like.count({
+      where: { postId },
+    });
+
+    return {
+      liked: true,
+      likesCount,
+    };
+  }
+
+  private formatPost(post: Post, currentUserId?: string | null): IPosts {
     const plain = post.get({ plain: true });
+
+    const likesArray = (plain.likes || []) as any[];
 
     return {
       ...plain,
       contentImageUrl: plain.contentImage
         ? `${API_URL}/uploads/${plain.contentImage}`
         : null,
+
+      likesCount: likesArray.length,
+
+      liked: currentUserId
+        ? likesArray.some((like: any) => like.userId === currentUserId)
+        : false,
     };
   }
 }

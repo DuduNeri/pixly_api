@@ -19,8 +19,8 @@ export class PostController {
     return this.postService.createPost(data);
   }
 
-  getPosts(): Promise<IPosts[]> {
-    return this.postService.getPostsByUsers();
+  getPosts(userId?: string): Promise<IPosts[]> {
+    return this.postService.getPostsByUsers(undefined, undefined, userId);
   }
 
   getPost(id: string): Promise<IPosts | null> {
@@ -35,16 +35,8 @@ export class PostController {
     return this.postService.deletePost(id, userId);
   }
 
-  update(
-    id: string,
-    userId: string,
-    data: UpdatePostDTO
-  ): Promise<IPosts> {
-    return this.postService.updatePost(
-      id,
-      userId,
-      data
-    );
+  update(id: string, userId: string, data: UpdatePostDTO): Promise<IPosts> {
+    return this.postService.updatePost(id, userId, data);
   }
 
   createComment(data: CommentAttributes) {
@@ -57,5 +49,9 @@ export class PostController {
 
   getAvatar(data: UpdatePhoto) {
     return this.postService.getAvatar(data);
+  }
+
+  async createLikeController(userId: string, postId: string) {
+    return await this.postService.createLike(userId, postId);
   }
 }

@@ -8,6 +8,7 @@ export interface PostAttributes {
   comments: string[];
   userId: string;
   avatar?: string;
+  likes?: string;
 }
 
 export interface GetAvatarDTO {
@@ -33,6 +34,9 @@ export interface IPosts {
   contentImageUrl?: string | null;
   comments: string[];
   userId: string;
+  likes?: string;
+  likesCount?: number;
+  liked?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }

@@ -20,9 +20,7 @@ postRouter.post(
 
       const { title, contentText, avatar } = req.body;
 
-      const contentImage = req.file
-        ? req.file.filename
-        : null;
+      const contentImage = req.file ? req.file.filename : null;
 
       const post = await postController.createPost({
         title,
@@ -38,7 +36,7 @@ postRouter.post(
         error: error.message,
       });
     }
-  }
+  },
 );
 
 postRouter.post(
@@ -47,9 +45,8 @@ postRouter.post(
   upload.single("avatar"),
   async (req: Request, res: Response) => {
     try {
-
-      console.log("USER:", req.user);
-      console.log("FILE:", req.file);
+      // console.log("USER:", req.user);
+      // console.log("FILE:", req.file);
       if (!req.user) {
         return res.status(401).json({
           error: "Usuário não autenticado",
@@ -63,13 +60,13 @@ postRouter.post(
       }
 
       const avatarFileName = req.file.filename;
-      console.log(avatarFileName)
+      console.log(avatarFileName);
 
       await postController.updateAvatar({
         userId: req.user.id,
         avatar: avatarFileName,
       });
-    
+
       return res.status(200).json({
         message: "Imagem atualizada com sucesso",
         avatar: avatarFileName,
@@ -79,7 +76,7 @@ postRouter.post(
         error: error.message,
       });
     }
-  }
+  },
 );
 
 postRouter.get(
@@ -87,15 +84,18 @@ postRouter.get(
   authMidleware,
   async (_req: Request, res: Response) => {
     try {
-      const posts = await postController.getPosts();
+      const userId = (_req as any).userId || (_req as any).user?.id;
 
-      return res.status(200).json(posts);
+
+      const posts = await postController.getPosts(userId as string);
+
+      return res.status(200).json(posts); 
     } catch (error: any) {
       return res.status(400).json({
         error: error.message,
       });
     }
-  }
+  },
 );
 
 postRouter.get(
@@ -120,7 +120,7 @@ postRouter.get(
         message: error.message,
       });
     }
-  }
+  },
 );
 
 postRouter.get(
@@ -138,7 +138,7 @@ postRouter.get(
         error: error.message,
       });
     }
-  }
+  },
 );
 
 postRouter.get(
@@ -156,7 +156,7 @@ postRouter.get(
         message: error.message,
       });
     }
-  }
+  },
 );
 
 postRouter.delete(
@@ -172,10 +172,7 @@ postRouter.delete(
 
       const { id } = req.params;
 
-      const post = await postController.delete(
-        id,
-        req.user.id
-      );
+      const post = await postController.delete(id, req.user.id);
 
       return res.status(200).json({
         message: "Post deletado com sucesso",
@@ -186,7 +183,7 @@ postRouter.delete(
         error: error.message,
       });
     }
-  }
+  },
 );
 
 postRouter.put(
@@ -213,11 +210,7 @@ postRouter.put(
         updateData.contentImage = req.file.filename;
       }
 
-      const update = await postController.update(
-        id,
-        req.user.id,
-        updateData
-      );
+      const update = await postController.update(id, req.user.id, updateData);
 
       return res.status(200).json(update);
     } catch (error: any) {
@@ -225,5 +218,20 @@ postRouter.put(
         error: error.message,
       });
     }
-  }
+  },
 );
+
+postRouter.post("/like/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { postId } = req.body;
+
+    const result = await postController.createLikeController(userId, postId);
+
+    return res.status(200).json(result);
+  } catch (error: any) {
+    return res.status(400).json({
+      error: error.message,
+    });
+  }
+});

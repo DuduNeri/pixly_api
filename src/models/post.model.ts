@@ -1,4 +1,3 @@
-// src/models/post.model.ts
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../config/db";
 import { PostAttributes, PostCreationAttributes } from "../interfaces/post.interface";
