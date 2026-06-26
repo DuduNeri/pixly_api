@@ -79,7 +79,7 @@ postRouter.post(
   },
 );
 
-postRouter.post("/like/:userId", async (req, res) => {
+postRouter.post("/like/:userId", authMidleware, async (req, res) => {
   try {
     const { userId } = req.params;
     const { postId } = req.body;
@@ -94,7 +94,7 @@ postRouter.post("/like/:userId", async (req, res) => {
   }
 });
 
-postRouter.post("/posts/comment/:userId", async (req: Request, res: Response) => {
+postRouter.post("/posts/comment/:userId", authMidleware, async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const { postId, content } = req.body;
@@ -134,7 +134,7 @@ postRouter.get(
 
 postRouter.get(
   "/posts/avatar",
-  authMidleware,
+  
   async (req: Request, res: Response) => {
     try {
       if (!req.user) {
@@ -193,6 +193,23 @@ postRouter.get(
   },
 );
 
+postRouter.get("/posts/:id/comments", authMidleware, async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const comments = await postController.getCommentById(id);
+
+    return res.status(200).json(comments);
+
+  } catch (error: any) {
+    console.error("Erro na rota de listagem de comentários:", error);
+
+    return res.status(500).json({
+      message: "Erro interno ao buscar os comentários do post.",
+      error: error.message
+    });
+  }
+});
+
 postRouter.delete(
   "/post/:id",
   authMidleware,
@@ -220,7 +237,7 @@ postRouter.delete(
   },
 );
 
-postRouter.delete("/posts/comment/:id", async (req: Request, res: Response) => {
+postRouter.delete("/posts/comment/:id", authMidleware, async (req: Request, res: Response) => {
   try {
     const { id } = req.params
     const response = await postController.deleteCommentByUser(id)

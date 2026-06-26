@@ -27,6 +27,13 @@ export type CreateCommentDTO = {
   userId: string;
 };
 
+export type GetCommentDTO = {
+  content: string;
+  postId: string;
+  userId: string;
+};
+
+
 export interface CommentCreationAttributes
   extends Optional<CommentAttributes, "id"> {}
 

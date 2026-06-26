@@ -5,6 +5,7 @@ import {
   CommentAttributes,
   UpdatePhoto,
   CreateCommentDTO,
+  GetCommentDTO,
 } from "../interfaces/post.interface";
 
 import { PostService } from "../services/post.service";
@@ -58,5 +59,9 @@ export class PostController {
 
   deleteCommentByUser(id: string){
     return this.postService.deleteComment(id)
+  }
+
+  getCommentById(id: string): Promise<GetCommentDTO[]>{
+    return this.postService.getCommentsByPostId(id)
   }
 }

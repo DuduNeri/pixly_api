@@ -1,6 +1,7 @@
 import {
   CreateCommentDTO,
   GetAvatarDTO,
+  GetCommentDTO,
   UpdatePhoto,
   UpdatePostDTO,
 } from "./../interfaces/post.interface";
@@ -66,6 +67,20 @@ export class PostService {
     }
   }
 
+  async getCommentsByPostId(postId: string): Promise<GetCommentDTO[]> {
+    try {
+      const comments = await Comment.findAll({
+        where: { postId },
+        order: [['createdAt', 'ASC']] // Opcional: do mais antigo para o mais novo
+      });
+
+      return comments.map(comment => comment.toJSON() as GetCommentDTO);
+    } catch (error) {
+      console.error("Erro ao listar comentários do post:", error);
+      throw error;
+    }
+  }
+  
   async getPostsByUsers(
     page: number = 1,
     limit: number = 10,
@@ -92,7 +107,7 @@ export class PostService {
           {
             model: Comment,
             as: "comments",
-            attributes: ["userId"],
+            attributes: ["userId", "content"],
           },
         ],
       });
