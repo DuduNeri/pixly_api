@@ -79,6 +79,40 @@ postRouter.post(
   },
 );
 
+postRouter.post("/like/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { postId } = req.body;
+
+    const result = await postController.createLikeController(userId, postId);
+
+    return res.status(200).json(result);
+  } catch (error: any) {
+    return res.status(400).json({
+      error: error.message,
+    });
+  }
+});
+
+postRouter.post("/posts/comment/:userId", async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const { postId, content } = req.body;
+
+    const result = await postController.createdComment({
+      userId,
+      postId,
+      content
+    });
+
+    return res.status(201).json(result);
+  } catch (error: any) {
+    return res.status(400).json({
+      error: error.message,
+    });
+  }
+});
+
 postRouter.get(
   "/posts",
   authMidleware,
@@ -89,7 +123,7 @@ postRouter.get(
 
       const posts = await postController.getPosts(userId as string);
 
-      return res.status(200).json(posts); 
+      return res.status(200).json(posts);
     } catch (error: any) {
       return res.status(400).json({
         error: error.message,
@@ -186,6 +220,18 @@ postRouter.delete(
   },
 );
 
+postRouter.delete("/posts/comment/:id", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const response = await postController.deleteCommentByUser(id)
+    return res.status(200).json(response)
+  } catch (error: any) {
+    return res.status(400).json({
+      error: error.message,
+    });
+  }
+})
+
 postRouter.put(
   "/post/:id",
   authMidleware,
@@ -221,17 +267,3 @@ postRouter.put(
   },
 );
 
-postRouter.post("/like/:userId", async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const { postId } = req.body;
-
-    const result = await postController.createLikeController(userId, postId);
-
-    return res.status(200).json(result);
-  } catch (error: any) {
-    return res.status(400).json({
-      error: error.message,
-    });
-  }
-});

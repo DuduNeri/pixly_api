@@ -5,7 +5,6 @@ export interface PostAttributes {
   title?: string;
   contentText?: string | null;
   contentImage?: string | null;
-  comments: string[];
   userId: string;
   avatar?: string;
   likes?: string;
@@ -22,6 +21,12 @@ export interface CommentAttributes {
   userId: string;
 }
 
+export type CreateCommentDTO = {
+  content: string;
+  postId: string;
+  userId: string;
+};
+
 export interface CommentCreationAttributes
   extends Optional<CommentAttributes, "id"> {}
 
@@ -32,7 +37,6 @@ export interface IPosts {
   contentText?: string | null;
   contentImage?: string | null;
   contentImageUrl?: string | null;
-  comments: string[];
   userId: string;
   likes?: string;
   likesCount?: number;
@@ -75,7 +79,6 @@ export interface PostResponseDTO {
   title?: string;
   contentText?: string | null;
   contentImage?: string | null;
-  comments: string[];
   createdAt: Date;
   user: {
     id: string;
@@ -87,5 +90,5 @@ export interface PostResponseDTO {
 
 export interface PostCreationAttributes extends Optional<
   PostAttributes,
-  "id" | "title" | "contentText" | "contentImage" | "comments"
+  "id" | "title" | "contentText" | "contentImage" 
 > {}

@@ -4,6 +4,7 @@ import {
   UpdatePostDTO,
   CommentAttributes,
   UpdatePhoto,
+  CreateCommentDTO,
 } from "../interfaces/post.interface";
 
 import { PostService } from "../services/post.service";
@@ -39,7 +40,7 @@ export class PostController {
     return this.postService.updatePost(id, userId, data);
   }
 
-  createComment(data: CommentAttributes) {
+  createdComment(data: CreateCommentDTO) {
     return this.postService.createComment(data);
   }
 
@@ -51,7 +52,11 @@ export class PostController {
     return this.postService.getAvatar(data);
   }
 
-  async createLikeController(userId: string, postId: string) {
-    return await this.postService.createLike(userId, postId);
+  createLikeController(userId: string, postId: string) {
+    return this.postService.createLike(userId, postId);
+  }
+
+  deleteCommentByUser(id: string){
+    return this.postService.deleteComment(id)
   }
 }

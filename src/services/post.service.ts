@@ -1,4 +1,5 @@
 import {
+  CreateCommentDTO,
   GetAvatarDTO,
   UpdatePhoto,
   UpdatePostDTO,
@@ -11,7 +12,7 @@ import {
 import { AppError } from "../utils/appError";
 import Post from "../models/post.model";
 import User from "../models/user.model";
-import Comment from "../models/commetns.model";
+import Comment from "../models/comments.model";
 import Like from "../models/like.model";
 
 const API_URL = process.env.API_URL ?? "http://localhost:3333";
@@ -34,7 +35,6 @@ export class PostService {
         title: data.title,
         contentText: data.contentText,
         contentImage: data.contentImage,
-        comments: data.comments ?? [],
         userId: data.userId,
         avatar: data.avatar,
       });
@@ -43,12 +43,26 @@ export class PostService {
     }
   }
 
-  async createComment(data: CommentAttributes) {
+  async createComment(data: CreateCommentDTO) {
     try {
       const comment = await Comment.create(data);
       return comment;
     } catch (error: any) {
       throw new Error(error.message);
+    }
+  }
+
+  async deleteComment(id: string) {
+    try {
+      const comment = await Comment.findByPk(id)
+      if (!comment) {
+        throw new Error("Comentário não encontrado");
+      }
+      await comment.destroy();
+      return { message: "Comentario excluído com sucesso" };
+    } catch (error: any) {
+      if (error instanceof AppError) throw error;
+      throw new AppError(400, `Erro ao excluir comentário;: ${error.message}`);
     }
   }
 
@@ -73,6 +87,11 @@ export class PostService {
           {
             model: Like,
             as: "likes",
+            attributes: ["userId"],
+          },
+          {
+            model: Comment,
+            as: "comments",
             attributes: ["userId"],
           },
         ],
