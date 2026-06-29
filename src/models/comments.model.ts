@@ -32,17 +32,20 @@ Comment.init(
     postId: {
       type: DataTypes.UUID,
       allowNull: false,
+      field: "post_id",
     },
 
     userId: {
       type: DataTypes.UUID,
       allowNull: false,
+      field: "user_id",
     },
   },
   {
     sequelize,
     tableName: "comments",
     timestamps: true,
+    underscored: true,
   }
 );
 

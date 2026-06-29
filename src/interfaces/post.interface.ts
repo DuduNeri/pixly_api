@@ -28,9 +28,14 @@ export type CreateCommentDTO = {
 };
 
 export type GetCommentDTO = {
+  id: string;
   content: string;
   postId: string;
-  userId: string;
+  user: {
+    id: string;
+    name: string;
+    avatar: string | null;
+  };
 };
 
 

@@ -11,7 +11,7 @@ export const sequelize = new Sequelize(
     port: Number(process.env.DB_PORT) || 5432,
     dialect: "postgres",
     logging: false,
-  }
+  },
 );
 
 export async function connectDB() {
@@ -21,7 +21,6 @@ export async function connectDB() {
 
     await sequelize.sync({ alter: true });
     console.log("📦 Tabelas sincronizadas com sucesso!");
-
   } catch (error) {
     console.error("❌ Erro ao conectar ao banco:", error);
     process.exit(1);

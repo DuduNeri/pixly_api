@@ -114,7 +114,7 @@ postRouter.post("/posts/comment/:userId", authMidleware, async (req: Request, re
 });
 
 postRouter.get(
-  "/posts",
+  "/posts/users",
   authMidleware,
   async (_req: Request, res: Response) => {
     try {

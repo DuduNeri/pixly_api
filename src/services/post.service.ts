@@ -55,7 +55,7 @@ export class PostService {
 
   async deleteComment(id: string) {
     try {
-      const comment = await Comment.findByPk(id)
+      const comment = await Comment.findByPk(id);
       if (!comment) {
         throw new Error("Comentário não encontrado");
       }
@@ -70,17 +70,37 @@ export class PostService {
   async getCommentsByPostId(postId: string): Promise<GetCommentDTO[]> {
     try {
       const comments = await Comment.findAll({
+        order: [["createdAt", "DESC"]],
         where: { postId },
-        order: [['createdAt', 'ASC']] // Opcional: do mais antigo para o mais novo
+        include: [
+          {
+            model: User,
+            as: "user",
+            attributes: ["id", "name", "avatar"],
+          },
+        ],
       });
 
-      return comments.map(comment => comment.toJSON() as GetCommentDTO);
+      return comments.map((comment) => {
+        const data = comment.toJSON() as any;
+
+        return {
+          id: data.id,
+          content: data.content,
+          postId: data.postId,
+          userId: data.userId,
+          user: {
+            id: data.user.id,
+            name: data.user.name,
+            avatar: data.user.avatar,
+          },
+        };
+      });
     } catch (error) {
       console.error("Erro ao listar comentários do post:", error);
       throw error;
     }
   }
-  
   async getPostsByUsers(
     page: number = 1,
     limit: number = 10,
@@ -115,7 +135,6 @@ export class PostService {
       if (!posts.length) {
         throw new AppError(404, "Nenhum post encontrado");
       }
-
 
       return posts.map((post) => this.formatPost(post, currentUserId));
     } catch (error: any) {
