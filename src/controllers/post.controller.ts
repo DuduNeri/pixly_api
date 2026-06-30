@@ -57,8 +57,8 @@ export class PostController {
     return this.postService.createLike(userId, postId);
   }
 
-  deleteCommentByUser(id: string){
-    return this.postService.deleteComment(id)
+  deleteCommentByUser(id: string, userId: string){
+    return this.postService.deleteComment(id, userId)
   }
 
   getCommentById(id: string): Promise<GetCommentDTO[]>{

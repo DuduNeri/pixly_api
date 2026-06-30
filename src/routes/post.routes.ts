@@ -134,7 +134,6 @@ postRouter.get(
 
 postRouter.get(
   "/posts/avatar",
-  
   async (req: Request, res: Response) => {
     try {
       if (!req.user) {
@@ -237,17 +236,27 @@ postRouter.delete(
   },
 );
 
+interface AuthenticatedRequest extends Request {
+  userId?: string;
+}
+
 postRouter.delete("/posts/comment/:id", authMidleware, async (req: Request, res: Response) => {
   try {
-    const { id } = req.params
-    const response = await postController.deleteCommentByUser(id)
-    return res.status(200).json(response)
+    const { id } = req.params;
+
+    const authenticatedUserId = (req as any).user?.id;
+
+    const response = await postController.deleteCommentByUser(id, authenticatedUserId);
+
+    return res.status(200).json(response);
   } catch (error: any) {
-    return res.status(400).json({
+    const statusCode = error.statusCode || 400;
+
+    return res.status(statusCode).json({
       error: error.message,
     });
   }
-})
+});
 
 postRouter.put(
   "/post/:id",

@@ -53,12 +53,19 @@ export class PostService {
     }
   }
 
-  async deleteComment(id: string) {
+  async deleteComment(id: string, userId: string) {
     try {
+      
       const comment = await Comment.findByPk(id);
+
       if (!comment) {
         throw new Error("Comentário não encontrado");
       }
+
+      if (comment.userId !== userId) {
+        throw new AppError(403, "Você não tem permissão para excluir este comentário");
+      }
+      
       await comment.destroy();
       return { message: "Comentario excluído com sucesso" };
     } catch (error: any) {
@@ -167,6 +174,8 @@ export class PostService {
     await post.destroy();
     return { message: "Post excluído com sucesso" };
   }
+
+  
 
   async updatePost(
     id: string,
